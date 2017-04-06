@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Todo App</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title">GDG UYO Meet Up</string>
+    <string name="description">We will be discussing Android Local Storage with include Share Preference, SQLite and Content Providers and how you can use them in building great Apps.</string>
+    <string name="title_activity_add">Add Note</string>
+    <string name="title_hint">Title</string>
+    <string name="descrip_hint">Description</string>
+</resources>
