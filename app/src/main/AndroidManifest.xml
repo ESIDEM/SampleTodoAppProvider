@@ -28,6 +28,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ng.codeimpact.sampletodoappdatabase.MainActivity" />
         </activity>
+
+        <!--The provider-->
+        <provider
+            android:name=".data.NoteProvider"
+            android:authorities="ng.codeimpact.sampletodoappdatabase"
+            android:exported="false" />
     </application>
 
 </manifest>
