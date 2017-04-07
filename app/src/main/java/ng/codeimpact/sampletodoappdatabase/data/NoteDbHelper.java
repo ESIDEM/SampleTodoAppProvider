@@ -2,17 +2,11 @@ package ng.codeimpact.sampletodoappdatabase.data;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.List;
 
-import ng.codeimpact.sampletodoappdatabase.model.Note_Item;
-
-import static android.R.attr.id;
 
 /**
  * Created by Nsikak  Thompson on 4/5/2017.
@@ -31,8 +25,8 @@ public class NoteDbHelper extends SQLiteOpenHelper {
     // Note table
     private final static String NOTE_TABLE_NAME = NoteContract.Note.TABLE_NAME;
     private final static String NOTE_ROW_ID = NoteContract.Note.ID;
-    private final static String NOTE_ROW_TITLE = NoteContract.Note.NOTE_TITLE;
-    private final static String NOTE_ROW_DESCRIPTION = NoteContract.Note.DESCRIPTION;
+    public final static String NOTE_ROW_TITLE = NoteContract.Note.NOTE_TITLE;
+    public final static String NOTE_ROW_DESCRIPTION = NoteContract.Note.DESCRIPTION;
 
 
     // SQL statement to create the Version table
@@ -53,6 +47,16 @@ public class NoteDbHelper extends SQLiteOpenHelper {
         // Create Version table
         db.execSQL(NOTE_TABLE_CREATE);
         Log.i(LOG_TAG, "Creating table with query: " + NOTE_TABLE_CREATE);
+
+        //Inserting initial values
+        ContentValues values = new ContentValues();
+        values.put(NOTE_ROW_TITLE, "GDG Uyo Meet Up 2017");
+        values.put(NOTE_ROW_DESCRIPTION,
+                "We will be discussing Android Local Storage with include " +
+                        "Share Preference, SQLite and Content " +
+                "Providers and how you can use them in building great Apps.");
+
+        db.insert(NOTE_TABLE_NAME, null , values);
     }
 
     @Override

@@ -16,15 +16,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import ng.codeimpact.sampletodoappdatabase.data.NoteContract;
 import ng.codeimpact.sampletodoappdatabase.data.NoteDbHelper;
-import ng.codeimpact.sampletodoappdatabase.model.Note_Item;
 
-import static android.R.attr.id;
 import static android.R.attr.mode;
 
 public class AddActivity extends AppCompatActivity {
     private final static String LOG_TAG = AddActivity.class.getSimpleName();
-    private NoteDbHelper mDbHelper;
     private EditText add_title, add_description;
     String title_txt;
     String description_txt;
@@ -52,15 +50,13 @@ public class AddActivity extends AppCompatActivity {
         add_title = (EditText) findViewById(R.id.input_title);
         add_description = (EditText) findViewById(R.id.input_description);
 
-        //getting a reference to the DbHelper
-        mDbHelper = new NoteDbHelper(this);
 
         isUpdate = getIntent().getBooleanExtra("update", false);
 
         if (isUpdate) {
             String extra_title = getIntent().getStringExtra("note_title");
             String extra_description = getIntent().getStringExtra("note_desc");
-            id = getIntent().getIntExtra("id",0);
+            id = getIntent().getIntExtra("id", 0);
             add_title.setText(extra_title);
             add_description.setText(extra_description);
         }
@@ -76,9 +72,7 @@ public class AddActivity extends AppCompatActivity {
         if (!dataValidated(title_txt, description_txt)) {
             return;
         }
-        mDbHelper.updateNote(new Note_Item(title_txt, description_txt), id);
-        Toast.makeText(this, "Note Updated", Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(AddActivity.this, MainActivity.class));
+
 
     }
 
@@ -91,9 +85,14 @@ public class AddActivity extends AppCompatActivity {
             return;
         }
 
-        mDbHelper.insertNote(new Note_Item(title_txt, description_txt));
+        ContentValues values = new ContentValues();
+        values.put(NoteContract.Note.NOTE_TITLE, title_txt);
+        values.put(NoteContract.Note.DESCRIPTION, description_txt);
+        getContentResolver().insert(NoteContract.Note.CONTENT_URI, values);
+
         Toast.makeText(this, "Note Added", Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(AddActivity.this, MainActivity.class));
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+
 
     }
 

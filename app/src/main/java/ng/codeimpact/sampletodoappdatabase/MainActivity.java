@@ -1,14 +1,14 @@
 package ng.codeimpact.sampletodoappdatabase;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,22 +18,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import ng.codeimpact.sampletodoappdatabase.adapter.NoteListAdapter;
 import ng.codeimpact.sampletodoappdatabase.data.NoteContract;
 import ng.codeimpact.sampletodoappdatabase.data.NoteDbHelper;
-import ng.codeimpact.sampletodoappdatabase.model.Note_Item;
+
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private NoteDbHelper mDbHelper;
-    private ArrayList<Note_Item> noteDetailsList;
-    private RecyclerView recyclerView;
-    private NoteListAdapter noteListAdapter;
+    private ListView listView;
+    private SimpleCursorAdapter mAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,22 +65,32 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        String[] fromFields = new String[] {NoteContract.Note.NOTE_TITLE};
+        int[] toFields = new int[] {android.R.id.text1};
 
-        mDbHelper = new NoteDbHelper(this);
+        getSupportLoaderManager().initLoader(0, null, MainActivity.this);
+        mAdapter = new SimpleCursorAdapter(
+                getApplicationContext(),
+                android.R.layout.simple_expandable_list_item_1,
+                null,
+                fromFields,
+                toFields,
+                0
+        );
 
 
-        // Get all the Android Versions data from db
-        noteDetailsList = mDbHelper.getNote_Items();
+        listView = (ListView) findViewById(R.id.recycler_list);
+        listView.setAdapter(mAdapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
 
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_list);
-        noteListAdapter = new NoteListAdapter(getApplicationContext(), noteDetailsList);
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setHasFixedSize(true);
 
-        recyclerView.setAdapter(noteListAdapter);
     }
 
     @Override
@@ -124,7 +135,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } /*else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
 
@@ -135,7 +146,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         }
-
+*/
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -143,11 +154,34 @@ public class MainActivity extends AppCompatActivity
 
     //this method will clear all the records on the Note table
     public void clearAll() {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        db.delete(NoteContract.Note.TABLE_NAME, null, null);
-        db.close();
-        noteListAdapter.clear();
-        noteListAdapter.notifyDataSetChanged();
+
+        getContentResolver().delete(NoteContract.Note.CONTENT_URI, "1", null);
+        Toast.makeText(this, "All Note Deleted", Toast.LENGTH_SHORT).show();
+    }
+
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        CursorLoader cursorLoader = new CursorLoader(getApplicationContext(),
+                NoteContract.Note.CONTENT_URI,
+                NoteContract.Note.PROJECTION,
+                null,
+                null,
+                null
+        );
+        return cursorLoader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mAdapter.swapCursor(data);
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+        mAdapter.swapCursor(null);
 
     }
 }

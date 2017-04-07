@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ng.codeimpact.sampletodoappdatabase">
 
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -29,11 +30,11 @@
                 android:value="ng.codeimpact.sampletodoappdatabase.MainActivity" />
         </activity>
 
-        <!--The provider-->
+        <!-- TODO Register Provider-->
         <provider
-            android:name=".data.NoteProvider"
             android:authorities="ng.codeimpact.sampletodoappdatabase"
-            android:exported="false" />
+            android:name=".data.NoteProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>
