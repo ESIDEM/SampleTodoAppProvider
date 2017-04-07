@@ -72,6 +72,8 @@ public class AddActivity extends AppCompatActivity {
         if (!dataValidated(title_txt, description_txt)) {
             return;
         }
+        
+         finish();
 
 
     }
@@ -93,7 +95,7 @@ public class AddActivity extends AppCompatActivity {
         Toast.makeText(this, "Note Added", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
 
-
+        finish();
     }
 
     //Input Validation
